@@ -1,6 +1,5 @@
 import java.util.Random;
-public static final int MIN_SIZE = 200;
-public static final int MARGIN = 5;
+
 
 final class BSPnode{
   point topLeft;
@@ -53,24 +52,14 @@ final class BSPnode{
       return true;
     }
 
-    //int split = random.nextInt(MIN_SIZE, cutsize);
-    ////nextInt(max)%(max-min+1) + min
-    
-    //if(direction == 0){
-    //  leftChild = new BSPnode(topLeft, spaceWidth, split, this, this.depth);
-    //  rightChild = new BSPnode(new point(topLeft.x, topLeft.y + split),
-    //      spaceWidth, spaceHeight -split, this, this.depth);
-    //}else if(direction == 1){
-    //  leftChild = new BSPnode(topLeft, split, spaceHeight, this, this.depth);
-    //  rightChild = new BSPnode(new point(topLeft.x + split, topLeft.y),
-    //      spaceWidth - split, spaceHeight, this, this.depth);
-    //}
-
   }
   
   void divide(){
       Random random = new Random();
-      int split = random.nextInt(MIN_SIZE, cutsize);
+      int small = Math.min(MIN_SIZE,cutsize);
+      int large = Math.max(MIN_SIZE,cutsize);
+      
+      int split = random.nextInt(small,large);
       //nextInt(max)%(max-min+1) + min
       if(direction == 0){
         leftChild = new BSPnode(topLeft, spaceWidth, split, this, this.depth);
@@ -84,7 +73,21 @@ final class BSPnode{
   }
   
   void generateRoom(){
-        Room r = new Room(topLeft.x,topLeft.y,topLeft.x+10,topLeft.y+10);
+        Random random = new Random();
+        int x1 = topLeft.x + MARGIN;
+        int x2 = topLeft.x + spaceWidth - MARGIN;
+        int y1 = topLeft.y + MARGIN;
+        int y2 = topLeft.y + spaceHeight - MARGIN;
+        
+        System.out.println(x1 + " " + x2 + " " + y1 +" " + y2);
+        
+        int x3 = random.nextInt(x1-1,x2 - MIN_ROOM_SIZE+1);
+        int x4 = random.nextInt(x3-1 + MIN_ROOM_SIZE, x2+1);
+        
+        int y3 = random.nextInt(y1-1,y2 - MIN_ROOM_SIZE+1);
+        int y4 = random.nextInt(y3-1 + MIN_ROOM_SIZE, y2+1);
+        
+        Room r = new Room(x3,y3,x4,y4);
         roomList.add(r);
   
   }

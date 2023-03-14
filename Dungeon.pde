@@ -1,8 +1,10 @@
 import java.util.Random;
 import java.util.HashMap;
 
-
-public static final int MIN_WIDTH = 0;
+public static final int MIN_SIZE = 300;
+public static final int MARGIN = 20;
+public static final int MIN_ROOM_SIZE = MIN_SIZE - 2 * MARGIN ;
+//public static final int MIN_WIDTH = 0;
 
 BSPnode root;
 ArrayList<Room> roomList;
