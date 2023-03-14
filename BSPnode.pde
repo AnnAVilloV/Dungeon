@@ -1,6 +1,5 @@
 import java.util.Random;
 
-
 final class BSPnode{
   point topLeft;
   
@@ -42,34 +41,54 @@ final class BSPnode{
     }
     
     if (direction == 0){
-      cutsize = spaceHeight - MIN_SIZE;
+      cutsize = spaceHeight - MIN_HEIGHT;
+        if(cutsize < MIN_HEIGHT ){
+          return false;
+        }else{
+          return true;
+        }
     }else{
-      cutsize = spaceWidth - MIN_SIZE;
+      cutsize = spaceWidth - MIN_WIDTH;
+        if(cutsize < MIN_WIDTH ){
+          return false;
+        }else{
+          return true;
+        }
     }
-    if(cutsize < MIN_SIZE){
-      return false;
-    }else{
-      return true;
-    }
+    
+    
+    //if(cutsize < MIN_WIDTH ){
+    //  return false;
+    //}else{
+    //  return true;
+    //}
 
   }
   
   void divide(){
       Random random = new Random();
-      int small = Math.min(MIN_SIZE,cutsize);
-      int large = Math.max(MIN_SIZE,cutsize);
-      
-      int split = random.nextInt(small,large);
+      //int small = Math.min(MIN_WIDTH,cutsize);
+      //int large = Math.max(MIN_WIDTH,cutsize); 
+      //int split = random.nextInt(small,large);
       //nextInt(max)%(max-min+1) + min
       if(direction == 0){
+        int small = Math.min(MIN_HEIGHT,cutsize);
+        int large = Math.max(MIN_HEIGHT,cutsize); 
+        int split = random.nextInt(small,large+1);
         leftChild = new BSPnode(topLeft, spaceWidth, split, this, this.depth);
         rightChild = new BSPnode(new point(topLeft.x, topLeft.y + split),
             spaceWidth, spaceHeight -split, this, this.depth);
       }else if(direction == 1){
+        int small = Math.min(MIN_WIDTH,cutsize);
+        int large = Math.max(MIN_WIDTH,cutsize); 
+        int split = random.nextInt(small,large+1);
         leftChild = new BSPnode(topLeft, split, spaceHeight, this, this.depth);
         rightChild = new BSPnode(new point(topLeft.x + split, topLeft.y),
             spaceWidth - split, spaceHeight, this, this.depth);
       }
+      
+      
+      
   }
   
   void generateRoom(){
@@ -79,13 +98,13 @@ final class BSPnode{
         int y1 = topLeft.y + MARGIN;
         int y2 = topLeft.y + spaceHeight - MARGIN;
         
-        System.out.println(x1 + " " + x2 + " " + y1 +" " + y2);
+        //System.out.println(x1 + " " + x2 + " " + y1 +" " + y2);
         
-        int x3 = random.nextInt(x1-1,x2 - MIN_ROOM_SIZE+1);
-        int x4 = random.nextInt(x3-1 + MIN_ROOM_SIZE, x2+1);
+        int x3 = random.nextInt(x1-1,x2 - MAX_ROOM_WIDTH+1);
+        int x4 = random.nextInt(x3-1 + MAX_ROOM_WIDTH, x2+1);
         
-        int y3 = random.nextInt(y1-1,y2 - MIN_ROOM_SIZE+1);
-        int y4 = random.nextInt(y3-1 + MIN_ROOM_SIZE, y2+1);
+        int y3 = random.nextInt(y1-1,y2 - MAX_ROOM_HEIGHT+1);
+        int y4 = random.nextInt(y3-1 + MAX_ROOM_HEIGHT, y2+1);
         
         Room r = new Room(x3,y3,x4,y4);
         roomList.add(r);
