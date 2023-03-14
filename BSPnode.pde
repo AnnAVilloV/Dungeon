@@ -34,11 +34,9 @@ final class BSPnode{
   
   
   boolean isDividable(){
-    if(spaceWidth < spaceHeight) {
-      direction = 0 ; //cut the height, horizontal cut
-    }else if(spaceWidth >= spaceHeight) {
-      direction = 1; // cut the width, vertical cut
-    }
+    Random r = new Random();
+     direction = r.nextInt(0,2);
+     System.out.println("directon: " + direction);
     
     if (direction == 0){
       cutsize = spaceHeight - MIN_HEIGHT;

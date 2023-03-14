@@ -1,8 +1,8 @@
 import java.util.Random;
 import java.util.HashMap;
 
-public static final int MIN_WIDTH = 400;
-public static final int MIN_HEIGHT = 400;
+public static final int MIN_WIDTH = 300;
+public static final int MIN_HEIGHT = 300;
 public static final int MARGIN = 20;
 public static final int MAX_ROOM_WIDTH = MIN_WIDTH - 2 * MARGIN ;
 public static final int MAX_ROOM_HEIGHT = MIN_HEIGHT - 2 * MARGIN;
