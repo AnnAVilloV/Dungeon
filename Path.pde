@@ -1,8 +1,0 @@
-final class Path{
-
-
-  Path(){
-  
-  }
-
-}
