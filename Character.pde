@@ -43,7 +43,7 @@ final class Character{
   
  }
  boolean inTheRoom(){
-   if(position.x > atRoom.topLeft.x && position.x < atRoom.bottomRight.x && ){
+   if(position.x > atRoom.topLeft.x && position.x < atRoom.bottomRight.x  ){
    
    }
    return true;
