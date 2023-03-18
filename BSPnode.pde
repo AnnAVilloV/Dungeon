@@ -165,6 +165,12 @@ final class BSPnode{
               }
               path.add(new point(path_x,path_y1));
               path.add(new point(path_x,path_y2));
+              
+              Door d1 = new Door(new point(path_x - HALFCOR,path_y1),new point(path_x + HALFCOR, path_y1));
+              Door d2 = new Door(new point(path_x - HALFCOR,path_y2),new point(path_x + HALFCOR, path_y2));
+              
+              doorList.add(d1);doorList.add(d2);
+              
 
             }else{
               System.out.println("no effect edge, plan B");
@@ -181,6 +187,16 @@ final class BSPnode{
                 rightEnd = new point(k2.x, k2.y - r2.roomHeight/2);
               }
               path.add(center);path.add(left);path.add(right);path.add(leftEnd);path.add(rightEnd);
+              
+              Door d1 = new Door(new point(leftEnd.x - HALFCOR, leftEnd.y), new point(leftEnd.x + HALFCOR, leftEnd.y));
+              Door d2 = new Door(new point(rightEnd.x - HALFCOR, rightEnd.y), new point(rightEnd.x + HALFCOR, rightEnd.y));
+              int midWidth = Math.abs(left.x - right.x) - 2*HALFCOR;
+              Door d3 = new Door(new point(center.x - midWidth/2, center.y - HALFCOR), new point(center.x - midWidth/2, center.y + HALFCOR));
+              Door d4 = new Door(new point(center.x + midWidth/2, center.y - HALFCOR), new point(center.x + midWidth/2, center.y + HALFCOR));
+
+              doorList.add(d1);doorList.add(d2);doorList.add(d3);doorList.add(d4);
+              
+              
             }
           }else if(this.direction == 1){
               int effecty1 = Math.max(r1.topLeft.y,r2.topLeft.y);
@@ -200,6 +216,12 @@ final class BSPnode{
                 path.add(new point(path_x1,path_y));
                 path.add(new point(path_x2,path_y));
                 
+                Door d1 = new Door(new point(path_x1,path_y-HALFCOR),new point(path_x1, path_y+HALFCOR));
+                Door d2 = new Door(new point(path_x2,path_y-HALFCOR),new point(path_x2, path_y+HALFCOR));
+              
+                doorList.add(d1);doorList.add(d2);
+
+                
             }else{
               System.out.println("no effect edge, plan B");
               point center = new point((k1.x+k2.x)/2, (k1.y+k2.y)/2 );
@@ -216,6 +238,14 @@ final class BSPnode{
                 rightEnd = new point(k2.x + r2.roomWidth/2, k2.y);
               }
               path.add(center);path.add(left);path.add(right);path.add(leftEnd);path.add(rightEnd);
+
+              Door d1 = new Door(new point(leftEnd.x, leftEnd.y - HALFCOR), new point(leftEnd.x, leftEnd.y + HALFCOR));
+              Door d2 = new Door(new point(rightEnd.x, rightEnd.y - HALFCOR), new point(rightEnd.x, rightEnd.y + HALFCOR));
+              int midWidth = Math.abs(left.y - right.y) - 2*HALFCOR;
+              Door d3 = new Door(new point(center.x - HALFCOR, center.y - midWidth/2), new point(center.x + HALFCOR, center.y - midWidth/2));
+              Door d4 = new Door(new point(center.x - HALFCOR, center.y + midWidth/2), new point(center.x + HALFCOR, center.y + midWidth/2));
+              
+              doorList.add(d1);doorList.add(d2);doorList.add(d3);doorList.add(d4);
 
             }
 

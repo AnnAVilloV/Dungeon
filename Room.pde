@@ -4,6 +4,7 @@ final class Room{
   int roomWidth;
   int roomHeight;
   BSPnode mynode=null;
+
   
   Room(point topLeft, int rwidth, int rheight){
     this.topLeft = topLeft;

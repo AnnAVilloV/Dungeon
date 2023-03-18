@@ -6,20 +6,31 @@ public static final int MIN_HEIGHT = 300;
 public static final int MARGIN = 50;
 public static final int MAX_ROOM_WIDTH = MIN_WIDTH - 2 * MARGIN ;
 public static final int MAX_ROOM_HEIGHT = MIN_HEIGHT - 2 * MARGIN;
-
 public static final int HALFCOR = 15;
-//public static final int MIN_WIDTH = 0;
+public static final int INCREMENT_PROPORTION = 300;
 
 BSPnode root;
 
 ArrayList<Room> roomList;
 ArrayList<Corridor> corList;
+ArrayList<Door> doorList;
 HashMap<Integer, ArrayList<BSPnode>> nodes;
+
+Character human;
+
+boolean moveLeft = false;
+boolean moveRight = false;
+boolean moveUp = false;
+boolean moveDown = false;
 
 void setup(){
   fullScreen() ;  
+  int chaIncrement = displayWidth/INCREMENT_PROPORTION ; 
+    
   roomList = new ArrayList<Room>();
   corList = new ArrayList<Corridor>();
+  doorList =  new ArrayList<Door>();
+  
   root = new BSPnode(new point(0,0), displayWidth, displayHeight, null, -1);
   nodes = new HashMap<Integer, ArrayList<BSPnode>>();
   generate(root);
@@ -42,6 +53,8 @@ void setup(){
   root.creatPathBetweenChildren();
   createPathBetweenInnodes();
   
+  human = new Character(chaIncrement);
+  
 }
 
 void draw(){
@@ -49,28 +62,73 @@ void draw(){
   for(Room r: roomList){
     r.draw();
   }
-  
- nodes.forEach((key, value) -> {
-      for(BSPnode temp : value){
-        //System.out.println(key + " / " + temp.depth + ": " + temp.topLeft.x + " " + temp.topLeft.y);
-        if(temp.keyPoint != null){
-             fill(#C64040);
-              rect(temp.keyPoint.x,temp.keyPoint.y,10,10);
-        }
-        
-      }
-  });
-  
+  stroke(#CBC9C9);
+ //nodes.forEach((key, value) -> {
+ //     for(BSPnode temp : value){
+ //       //System.out.println(key + " / " + temp.depth + ": " + temp.topLeft.x + " " + temp.topLeft.y);
+ //       if(temp.keyPoint != null){
+ //            fill(#C64040);
+ //             rect(temp.keyPoint.x,temp.keyPoint.y,10,10);
+ //       }
+ //     }
+ // });
   for(Corridor c: corList){
     c.draw();
-    
   }
-
+  for(Door d:doorList){
+    d.draw();
+  }
   
-  fill(255);
-  text("normal",100,100);
+  
+  if(moveRight){
+    human.move("right");
+  }else if(moveLeft){
+    human.move("left");
+  }else if(moveUp){
+    human.move("up");
+  }else if(moveDown){
+    human.move("down");
+  }
+  human.draw();
+  
 }
 
+
+void keyPressed(){
+  if(key == CODED){
+    switch(keyCode){
+      case LEFT :
+        moveLeft = true;
+        break;
+      case RIGHT :
+        moveRight = true;
+        break;
+      case UP :
+        moveUp = true;
+        break;
+      case DOWN :
+        moveDown = true;
+        break;
+    }
+  }
+}
+
+void keyReleased(){
+    switch(keyCode){
+      case LEFT :
+        moveLeft = false;
+        break;
+      case RIGHT :
+        moveRight = false;
+        break;
+      case UP :
+        moveUp = false;
+        break;
+      case DOWN :
+        moveDown = false;
+        break;
+    }
+}
 
 void generate(BSPnode current){
     if(current.isDividable()){
@@ -130,6 +188,7 @@ public void createPathBetweenInnodes(){
           //create the path
           if(parrent.path == null){
               parrent.path = new ArrayList<point>();
+              
               if(parrent.direction == 0){ //cut horizontal
                 int middle_y = parrent.topLeft.y + parrent.split;
                 point leftKP = new point(0,0);
@@ -165,6 +224,13 @@ public void createPathBetweenInnodes(){
                     }
                     parrent.path.add(center);parrent.path.add(left);parrent.path.add(right);parrent.path.add(leftEnd);parrent.path.add(rightEnd);
 
+                    Door d1 = new Door(new point(leftEnd.x - HALFCOR, leftEnd.y), new point(leftEnd.x + HALFCOR, leftEnd.y));
+                    Door d2 = new Door(new point(rightEnd.x - HALFCOR, rightEnd.y), new point(rightEnd.x + HALFCOR, rightEnd.y));
+                    int midWidth = Math.abs(left.x - right.x) - 2*HALFCOR;
+                    Door d3 = new Door(new point(center.x - midWidth/2, center.y - HALFCOR), new point(center.x - midWidth/2, center.y + HALFCOR));
+                    Door d4 = new Door(new point(center.x + midWidth/2, center.y - HALFCOR), new point(center.x + midWidth/2, center.y + HALFCOR));
+      
+                    doorList.add(d1);doorList.add(d2);doorList.add(d3);doorList.add(d4);
 
               }else{ // cut vertical
               
@@ -203,7 +269,13 @@ public void createPathBetweenInnodes(){
                     }
                     parrent.path.add(center);parrent.path.add(left);parrent.path.add(right);parrent.path.add(leftEnd);parrent.path.add(rightEnd);
                 
-                
+                    Door d1 = new Door(new point(leftEnd.x, leftEnd.y - HALFCOR), new point(leftEnd.x, leftEnd.y + HALFCOR));
+                    Door d2 = new Door(new point(rightEnd.x, rightEnd.y - HALFCOR), new point(rightEnd.x, rightEnd.y + HALFCOR));
+                    int midWidth = Math.abs(left.y - right.y) - 2*HALFCOR;
+                    Door d3 = new Door(new point(center.x - HALFCOR, center.y - midWidth/2), new point(center.x + HALFCOR, center.y - midWidth/2));
+                    Door d4 = new Door(new point(center.x - HALFCOR, center.y + midWidth/2), new point(center.x + HALFCOR, center.y + midWidth/2));
+                    
+                    doorList.add(d1);doorList.add(d2);doorList.add(d3);doorList.add(d4);
                 
               }
 
@@ -216,9 +288,6 @@ public void createPathBetweenInnodes(){
         }
       }
     }
-    
-    
-    
   }
   
   
