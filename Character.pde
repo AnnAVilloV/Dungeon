@@ -4,16 +4,38 @@ final class Character{
   int moveIncrement ;
   Room atRoom ;
   
+  float HP = 100;
+  float armorValue = 50;
+  
+  
   Character(int increment){
     this.moveIncrement = increment;
     setStartSpace();
   }
   
   void draw(){
+    //character value boxes
+    fill(255);
+    text("HP: ",25,35);
+    text("Armor: ",260,35);
     
+    fill(#9782A5);
+    rect(50,25,200,25);
+
+    fill(#9782A5);
+    rect(300,25,200,25);
+
+
+    fill(#4BD331);
+    rect(50,25,200*HP/100,25);
+    fill(#4B00FF);
+    rect(300,25,200*armorValue/50,25);
+    
+    
+    
+    //the character
     fill(#082DFA);
     circle(position.x,position.y, 30);
-  
   
   }
    

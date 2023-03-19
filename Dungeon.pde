@@ -13,11 +13,13 @@ public static final int CHASE_INCREMENT_PROPORTION = 500;
 public static final int ALERT_DISTANCE = 100;
 
 BSPnode root;
+PVector portal;
 
 ArrayList<Room> roomList;
 ArrayList<Corridor> corList;
 ArrayList<Door> doorList;
 ArrayList<Enemy> enemyList;
+ArrayList<Item> itemList;
 HashMap<Integer, ArrayList<BSPnode>> nodes;
 
 Character human;
@@ -26,6 +28,9 @@ boolean moveLeft = false;
 boolean moveRight = false;
 boolean moveUp = false;
 boolean moveDown = false;
+
+
+
 
 void setup(){
   fullScreen() ;  
@@ -37,6 +42,7 @@ void setup(){
   corList = new ArrayList<Corridor>();
   doorList =  new ArrayList<Door>();
   enemyList = new ArrayList<Enemy>();
+  itemList = new ArrayList<Item>();
   
   root = new BSPnode(new point(0,0), displayWidth, displayHeight, null, -1);
   nodes = new HashMap<Integer, ArrayList<BSPnode>>();
@@ -56,22 +62,39 @@ void setup(){
         }
       }
   });
-  
   root.creatPathBetweenChildren();
   createPathBetweenInnodes();
   
+  //generate human
   human = new Character(chaIncrement);
   
+  //generate portal
+  Room portalRoom = roomList.get(new Random().nextInt(0, roomList.size()));
+  portal = new PVector(portalRoom.mynode.keyPoint.x, portalRoom.mynode.keyPoint.y);
+  
+  //generate enemy & items
   for(Room r : roomList){
     if(r != human.atRoom){
       int enemyNum = new Random().nextInt(1,3);
       for(int i=0;i<enemyNum;i++){
         Enemy temp = new Enemy(roamIncrement,chaseIncrement,r);
         enemyList.add(temp);
-        
       }
+      Item item;
+      int itemType = new Random().nextInt(0,2);
+      if(itemType == 0){
+         item = new Item("medicine", r);
+      }else{
+         item = new Item("potion", r);
+      }
+      itemList.add(item);
     }
   }
+
+    //generate key
+    Item Key = new Item("key", farthestRoom());
+    itemList.add(Key);
+
   
 }
 
@@ -106,6 +129,13 @@ void draw(){
     e.draw();
   }
   
+  for(Item i:itemList){
+    i.draw();
+  }
+  
+  //draw portal
+  fill(#4C4598);
+  rect(portal.x, portal.y, 50,70);
   
   if(moveRight){
     human.move("right");
@@ -118,9 +148,9 @@ void draw(){
   }
   human.draw();
   
+
   
 }
-
 
 void keyPressed(){
   if(key == CODED){
@@ -345,4 +375,30 @@ float calculate2PointDis(float x1, float y1, float x2, float y2){
   float h = abs(y1 - y2);
   distance = sqrt(w*w + h*h);
   return distance;
+}
+
+float calculate2RoomDis(Room r1, Room r2){
+  point p1 = r1.topLeft;
+  point p2 = r2.topLeft;
+  float dis = calculate2PointDis(p1.x,p1.y,p2.x,p2.y);
+  return dis;
+}
+
+Room farthestRoom(){
+  Room temp = human.atRoom;
+  float maxDis = 0;
+  float tempDis;
+  for(Room r: roomList){
+    tempDis = calculate2RoomDis(human.atRoom, r);
+    if(tempDis > maxDis){
+      maxDis = tempDis;
+      temp = r;
+    }
+  }
+  return temp;
+}
+
+void newLevel(){
+
+
 }
