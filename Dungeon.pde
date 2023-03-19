@@ -6,14 +6,17 @@ public static final int MIN_HEIGHT = 300;
 public static final int MARGIN = 50;
 public static final int MAX_ROOM_WIDTH = MIN_WIDTH - 2 * MARGIN ;
 public static final int MAX_ROOM_HEIGHT = MIN_HEIGHT - 2 * MARGIN;
-public static final int HALFCOR = 15;
+public static final int HALFCOR = 20;
 public static final int INCREMENT_PROPORTION = 300;
+public static final int ROAM_INCREMENT_PROPORTION = 1000;
+public static final int CHASE_INCREMENT_PROPORTION = 300;
 
 BSPnode root;
 
 ArrayList<Room> roomList;
 ArrayList<Corridor> corList;
 ArrayList<Door> doorList;
+ArrayList<Enemy> enemyList;
 HashMap<Integer, ArrayList<BSPnode>> nodes;
 
 Character human;
@@ -26,10 +29,13 @@ boolean moveDown = false;
 void setup(){
   fullScreen() ;  
   int chaIncrement = displayWidth/INCREMENT_PROPORTION ; 
+  int roamIncrement = displayWidth/ROAM_INCREMENT_PROPORTION ; 
+  int chaseIncrement = displayWidth/CHASE_INCREMENT_PROPORTION ; 
     
   roomList = new ArrayList<Room>();
   corList = new ArrayList<Corridor>();
   doorList =  new ArrayList<Door>();
+  enemyList = new ArrayList<Enemy>();
   
   root = new BSPnode(new point(0,0), displayWidth, displayHeight, null, -1);
   nodes = new HashMap<Integer, ArrayList<BSPnode>>();
@@ -55,6 +61,17 @@ void setup(){
   
   human = new Character(chaIncrement);
   
+  for(Room r : roomList){
+    if(r != human.atRoom){
+      int enemyNum = new Random().nextInt(1,3);
+      for(int i=0;i<enemyNum;i++){
+        Enemy temp = new Enemy(roamIncrement,chaseIncrement,r);
+        enemyList.add(temp);
+        
+      }
+    }
+  }
+  
 }
 
 void draw(){
@@ -79,6 +96,11 @@ void draw(){
     d.draw();
   }
   
+  for(Enemy e:enemyList){
+    e.roam();
+    e.draw();
+  }
+  
   
   if(moveRight){
     human.move("right");
@@ -90,6 +112,7 @@ void draw(){
     human.move("down");
   }
   human.draw();
+  
   
 }
 
