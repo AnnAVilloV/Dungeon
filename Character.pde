@@ -1,6 +1,6 @@
 final class Character{
 
-  point position;
+  PVector position;
   int moveIncrement ;
   Room atRoom ;
   
@@ -20,7 +20,7 @@ final class Character{
   void setStartSpace(){
     int roomNum = roomList.size();
     this.atRoom = roomList.get(new Random().nextInt(0,roomNum));
-    position = this.atRoom.mynode.keyPoint;
+    position = new PVector(this.atRoom.mynode.keyPoint.x, this.atRoom.mynode.keyPoint.y);
   }
   
  void move(String direction){

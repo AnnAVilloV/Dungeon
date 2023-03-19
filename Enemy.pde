@@ -41,11 +41,13 @@ final class Enemy{
     return p;
   }
   
-  //void move(){
-  //  if(status == "roaming"){
-  //    roam();
-  //  }
-  //}
+  void move(){
+    if(status == "roaming"){
+      roam();
+    }else if(status == "chasing"){
+       chase();
+    }
+  }
   
   void roam(){
       if(position.x == aim.x && position.y == aim.y){
@@ -55,14 +57,32 @@ final class Enemy{
       this.integrate(toTarget);
   }  
   
+  void chase(){
+    if(human.atRoom == this.atRoom){
+      PVector toTarget = new PVector(human.position.x - position.x, human.position.y - position.y);
+      this.integrate(toTarget);
+    }else{
+      status = "roaming";
+    }
+  }
+  
 void integrate(PVector toTarget){
     float distance = toTarget.mag();
           
     velocity = toTarget.copy();
-    if(distance > roamIncrement){
+    
+    if(status == "roaming"){
+      if(distance > roamIncrement){
       //调整速度
       velocity = velocity.normalize().mult(roamIncrement);
+      }
+    }else if(status == "chasing"){
+      if(distance > chaseIncrement){
+      //调整速度
+      velocity = velocity.normalize().mult(chaseIncrement);
+      }
     }
+
     
     position.add(velocity);
     

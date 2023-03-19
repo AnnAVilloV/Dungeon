@@ -9,7 +9,8 @@ public static final int MAX_ROOM_HEIGHT = MIN_HEIGHT - 2 * MARGIN;
 public static final int HALFCOR = 20;
 public static final int INCREMENT_PROPORTION = 300;
 public static final int ROAM_INCREMENT_PROPORTION = 1000;
-public static final int CHASE_INCREMENT_PROPORTION = 300;
+public static final int CHASE_INCREMENT_PROPORTION = 500;
+public static final int ALERT_DISTANCE = 100;
 
 BSPnode root;
 
@@ -97,7 +98,11 @@ void draw(){
   }
   
   for(Enemy e:enemyList){
-    e.roam();
+    float dis = calculate2PointDis(human.position.x, human.position.y, e.position.x, e.position.y);
+    if(dis < ALERT_DISTANCE){
+      e.status = "chasing";
+    }
+    e.move();
     e.draw();
   }
   
@@ -332,4 +337,12 @@ int getHbyP(point keyPoint){
       }
   }
   return 0;
+}
+
+float calculate2PointDis(float x1, float y1, float x2, float y2){
+  float distance;
+  float w = abs(x1 - x2);
+  float h = abs(y1 - y2);
+  distance = sqrt(w*w + h*h);
+  return distance;
 }
