@@ -1,5 +1,6 @@
 final class Character{
 
+  String status = "normal"; //normal,fight,dead
   PVector position;
   int moveIncrement ;
   Room atRoom ;

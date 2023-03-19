@@ -9,8 +9,10 @@ public static final int MAX_ROOM_HEIGHT = MIN_HEIGHT - 2 * MARGIN;
 public static final int HALFCOR = 20;
 public static final int INCREMENT_PROPORTION = 300;
 public static final int ROAM_INCREMENT_PROPORTION = 1000;
-public static final int CHASE_INCREMENT_PROPORTION = 500;
+public static final int CHASE_INCREMENT_PROPORTION = 800;
 public static final int ALERT_DISTANCE = 100;
+
+boolean show = false;
 
 BSPnode root;
 PVector portal;
@@ -29,11 +31,15 @@ boolean moveRight = false;
 boolean moveUp = false;
 boolean moveDown = false;
 
-
+Item Key;
 
 
 void setup(){
-  fullScreen() ;  
+  fullScreen() ;
+  newLevel();
+}
+
+void newLevel(){
   int chaIncrement = displayWidth/INCREMENT_PROPORTION ; 
   int roamIncrement = displayWidth/ROAM_INCREMENT_PROPORTION ; 
   int chaseIncrement = displayWidth/CHASE_INCREMENT_PROPORTION ; 
@@ -69,8 +75,7 @@ void setup(){
   human = new Character(chaIncrement);
   
   //generate portal
-  Room portalRoom = roomList.get(new Random().nextInt(0, roomList.size()));
-  portal = new PVector(portalRoom.mynode.keyPoint.x, portalRoom.mynode.keyPoint.y);
+  portal = new PVector(human.atRoom.mynode.keyPoint.x-25, human.atRoom.mynode.keyPoint.y-35);
   
   //generate enemy & items
   for(Room r : roomList){
@@ -92,14 +97,21 @@ void setup(){
   }
 
     //generate key
-    Item Key = new Item("key", farthestRoom());
+    Key = new Item("key", farthestRoom());
     itemList.add(Key);
 
-  
 }
 
 void draw(){
-  background(#050505) ;
+  background(0) ;
+  if(!show){
+    clip(human.position.x -200,human.position.y-125,400,250);
+  }
+
+  
+  fill(#5D5D5D);
+  rect(0,0,displayWidth,displayHeight);
+  
   for(Room r: roomList){
     r.draw();
   }
@@ -146,13 +158,21 @@ void draw(){
   }else if(moveDown){
     human.move("down");
   }
+  noClip();
   human.draw();
   
+  if(Key.status == 0){
+    if(calculate2PointDis(human.position.x, human.position.y,portal.x,portal.y) < 30)
+      newLevel();
+  }
 
   
 }
 
 void keyPressed(){
+  if(key == 's'){
+       show = !show;
+  }
   if(key == CODED){
     switch(keyCode){
       case LEFT :
@@ -396,9 +416,4 @@ Room farthestRoom(){
     }
   }
   return temp;
-}
-
-void newLevel(){
-
-
 }
