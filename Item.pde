@@ -13,8 +13,8 @@ final class Item{
     PVector randomPosition(Room r){
     PVector p = new PVector();
     Random random = new Random();
-    p.x = random.nextInt(r.topLeft.x+1, r.bottomRight.x-1);
-    p.y = random.nextInt(r.topLeft.y+1, r.bottomRight.y-1);
+    p.x = random.nextInt(r.topLeft.x+20, r.bottomRight.x-20);
+    p.y = random.nextInt(r.topLeft.y+20, r.bottomRight.y-20);
     return p;
   }
   
@@ -23,19 +23,29 @@ final class Item{
     
     if(status == 1){
       if(type == "key"){
-        fill(#FF9717);
-        circle(position.x, position.y, 20);
+        image(keyImage,position.x,position.y,30,30);
+        //fill(#FF9717);
+        //circle(position.x, position.y, 20);
       }else if(type == "medicine"){
-        fill(#68DE2F);
-        rect(position.x, position.y, 20,20);
+        image(mediImage,position.x,position.y,40,40);
       }else if(type == "potion"){
-        fill(#312FDE);
-        rect(position.x, position.y, 20,20);
+        image(potionImage,position.x,position.y,40,40);
       }
-    }
+      
+      if( calculate2PointDis(human.position.x, human.position.y, this.position.x, this.position.y )< 35){
+          if(type == "medicine"){
+             human.mediNum += 1;
+             status = 0;
+          }else if(type == "potion"){
+            human.potionNum += 1;
+            status = 0;
+          }else if(type == "key"){
+            Key.status = 0;
+          }
+       }
     
-    if( calculate2PointDis(human.position.x, human.position.y, this.position.x, this.position.y )< 30){
-      status = 0;
+
+      
     }
 
   }

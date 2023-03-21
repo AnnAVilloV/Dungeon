@@ -7,12 +7,27 @@ final class Enemy{
   String status = "roaming"; //roaming, chasing, dead
   Room atRoom;
   
+  
+  
+  float HPlimit = new Random().nextFloat(human.HPlimit*0.8, human.HPlimit * 1.2);
+  float HP = HPlimit;
+  float armorLimit = new Random().nextFloat(human.phyAttack - HP/5, human.phyAttack + human.magicAttack*3/2);
+  float armorValue = armorLimit;
+  
+  float magicAttack = human.armorValue/5;
+  float phyAttack = new Random().nextFloat(human.armorValue - magicAttack, human.armorValue + human.HPlimit/10 +1);
+
+  
+  String nextAttack = "phy";//phy,ma
+  
   int roamIncrement ;
   int chaseIncrement ;
   
   float orientation = 0f;
   PVector velocity = new PVector(0.1f,0.1f);
   PVector aim;
+  
+  //Enemy(){}
   
   Enemy(int roamInc, int chaseInc, Room r){
     this.roamIncrement = roamInc;
@@ -61,6 +76,10 @@ final class Enemy{
     if(human.atRoom == this.atRoom){
       PVector toTarget = new PVector(human.position.x - position.x, human.position.y - position.y);
       this.integrate(toTarget);
+      if(calculate2PointDis(human.position.x,human.position.y,this.position.x,this.position.y) <= 10f){
+        human.status = "fight";
+        nowCombat = new Combat(this);
+      }
     }else{
       status = "roaming";
     }

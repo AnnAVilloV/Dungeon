@@ -12,7 +12,9 @@ public static final int ROAM_INCREMENT_PROPORTION = 1000;
 public static final int CHASE_INCREMENT_PROPORTION = 800;
 public static final int ALERT_DISTANCE = 100;
 
+String gameStatus = "playing"; //playing, gameOver
 boolean show = false;
+boolean menu = false;
 
 BSPnode root;
 PVector portal;
@@ -25,24 +27,56 @@ ArrayList<Item> itemList;
 HashMap<Integer, ArrayList<BSPnode>> nodes;
 
 Character human;
+int dungeonDepth = 0;
 
 boolean moveLeft = false;
 boolean moveRight = false;
 boolean moveUp = false;
 boolean moveDown = false;
 
+boolean physicAttack = false;
+boolean magicAttack = false;
+
+boolean addHP = false;
+boolean addArmor = false;
+
 Item Key;
+Combat nowCombat;
 
+PImage keyImage;
+PImage mediImage;
+PImage potionImage;
+PImage monsterImage;
+PImage humanImage;
+PImage portalImage;
 
+int chaIncrement;
+int roamIncrement;
+int chaseIncrement;
+ 
 void setup(){
   fullScreen() ;
+  chaIncrement = displayWidth/INCREMENT_PROPORTION ; 
+  roamIncrement = displayWidth/ROAM_INCREMENT_PROPORTION ; 
+  chaseIncrement = displayWidth/CHASE_INCREMENT_PROPORTION ; 
+  
+  //generate human
+  human = new Character(chaIncrement);
+  
   newLevel();
+  
+  keyImage = loadImage("key.png");
+  mediImage = loadImage("medicine.png");
+  potionImage = loadImage("potion.png");
+  monsterImage = loadImage("monster.png");
+  humanImage = loadImage("human.png");
+  portalImage = loadImage("portal.png");
+  
+
 }
 
 void newLevel(){
-  int chaIncrement = displayWidth/INCREMENT_PROPORTION ; 
-  int roamIncrement = displayWidth/ROAM_INCREMENT_PROPORTION ; 
-  int chaseIncrement = displayWidth/CHASE_INCREMENT_PROPORTION ; 
+  dungeonDepth ++;
     
   roomList = new ArrayList<Room>();
   corList = new ArrayList<Corridor>();
@@ -71,16 +105,21 @@ void newLevel(){
   root.creatPathBetweenChildren();
   createPathBetweenInnodes();
   
-  //generate human
-  human = new Character(chaIncrement);
+  
+  human.setStartSpace();
   
   //generate portal
-  portal = new PVector(human.atRoom.mynode.keyPoint.x-25, human.atRoom.mynode.keyPoint.y-35);
+  portal = new PVector(human.atRoom.mynode.keyPoint.x-40, human.atRoom.mynode.keyPoint.y-40);
   
   //generate enemy & items
   for(Room r : roomList){
     if(r != human.atRoom){
-      int enemyNum = new Random().nextInt(1,3);
+      //int enemyNum = new Random().nextInt(1,3);
+      //int enemyNum = 1;
+      float roomArea = r.roomWidth * r.roomHeight;
+      int enemyNum = (int)Math.ceil((double)(roomArea/(MIN_WIDTH*MIN_HEIGHT)));
+      
+      
       for(int i=0;i<enemyNum;i++){
         Enemy temp = new Enemy(roamIncrement,chaseIncrement,r);
         enemyList.add(temp);
@@ -103,6 +142,62 @@ void newLevel(){
 }
 
 void draw(){
+  if(gameStatus == "playing"){
+    if(human.status == "normal"){
+      drawNormal();
+    }else if(human.status == "fight"){
+      nowCombat.draw();
+    }
+  }else if(gameStatus == "gameOver"){
+    gameOver();
+  }
+  
+  if(menu){
+     drawMenu();
+  }
+  
+
+  
+}
+
+void gameOver(){
+  fill(0);
+  rect(0,0,displayWidth,displayHeight);
+  
+  fill(255);
+  text("GAME OVER", 100,100);
+}
+
+void drawMenu(){
+   fill(#74709B);
+    int menuX = displayWidth/2-displayWidth/4;
+    int menuY = displayHeight/2-displayHeight/4;
+    int menuW = displayWidth/2;
+    int menuH = displayHeight/2;
+    rect(menuX, menuY, menuW, menuH);
+    
+    image(humanImage, menuX+menuW/16,menuY+menuH/8,200,200);
+    
+    
+    
+    fill(0);
+    textSize(menuX/10);
+    text("Level: " + human.level, menuX + menuW*2/5, menuY + menuH/8);
+    text("Strength: " + human.strength, menuX + menuW*2/5, menuY + menuH/4);
+    text("Agility: "+ human.agility,  menuX + menuW*2/5, menuY + menuH*3/8);
+    text("HP: " + human.HP + "/" + human.HPlimit, menuX + menuW*2/5, menuY + menuH/2);
+    text("Armor: " + human.armorValue + "/" + human.armorLimit, menuX + menuW*2/5, menuY + menuH*5/8);
+    text("EXP: " + human.EXP+ "/" + human.EXPlimit, menuX + menuW*2/5, menuY + menuH*3/4);
+    text("Dungeon Depth: " + dungeonDepth, menuX + menuW*2/5, menuY + menuH*7/8);
+    
+    fill(255);
+    textSize(menuX/20);
+    text("-> crit rate: "+ (float)human.strength/10 + "%",menuX + menuW*7/10 ,menuY + menuH/4);
+    text("-> dodge rate: "+ (float)human.agility/10 + "%",menuX + menuW*7/10 , menuY + menuH*3/8);
+}
+
+void drawNormal(){
+  
   background(0) ;
   if(!show){
     clip(human.position.x -200,human.position.y-125,400,250);
@@ -116,15 +211,7 @@ void draw(){
     r.draw();
   }
   stroke(#CBC9C9);
- //nodes.forEach((key, value) -> {
- //     for(BSPnode temp : value){
- //       //System.out.println(key + " / " + temp.depth + ": " + temp.topLeft.x + " " + temp.topLeft.y);
- //       if(temp.keyPoint != null){
- //            fill(#C64040);
- //             rect(temp.keyPoint.x,temp.keyPoint.y,10,10);
- //       }
- //     }
- // });
+
   for(Corridor c: corList){
     c.draw();
   }
@@ -146,33 +233,80 @@ void draw(){
   }
   
   //draw portal
-  fill(#4C4598);
-  rect(portal.x, portal.y, 50,70);
+  //fill(#4C4598);
+  //rect(portal.x, portal.y, 50,70);
+  image(portalImage,portal.x,portal.y,80,80);
   
   if(moveRight){
     human.move("right");
-  }else if(moveLeft){
+  }
+  else if(moveLeft){
     human.move("left");
-  }else if(moveUp){
+  }
+  else if(moveUp){
     human.move("up");
-  }else if(moveDown){
+  }
+  else if(moveDown){
     human.move("down");
   }
+  
+  //using medicine/potion
+  useItem();
+
   noClip();
   human.draw();
   
-  if(Key.status == 0){
-    if(calculate2PointDis(human.position.x, human.position.y,portal.x,portal.y) < 30)
-      newLevel();
-  }
 
-  
 }
 
+ void useItem(){
+    if(addHP){
+      human.HP += human.HPlimit/8;
+      if(human.HP>human.HPlimit){
+        human.HP = human.HPlimit;
+      }else{
+        human.mediNum -= 1;
+      }
+      addHP = !addHP;
+    }else if(addArmor){
+      //human.armorValue += min(human.HPlimit/10,human.armorValue/6);
+      human.armorValue += 10;
+      if(human.armorValue > human.armorLimit){
+        human.armorLimit = human.armorValue;
+      }
+      human.potionNum -= 1;
+      addArmor = !addArmor;
+    }
+ 
+ }
+
+  void mousePressed(){
+    if(mouseX >= displayWidth/16 && mouseX <= displayWidth/16+displayWidth/5 && mouseY >= displayHeight*3/4+displayHeight/10 && mouseY <= displayHeight*3/4 + displayHeight/5)  {
+      //physical attack
+      physicAttack = true;
+      System.out.println("physic attack!");
+    }
+    if(mouseX >= displayWidth*5/16 && mouseX <= displayWidth*5/16+displayWidth/5 && mouseY >= displayHeight*3/4+displayHeight/10 && mouseY <= displayHeight*3/4 + displayHeight/5){
+      magicAttack = true;
+      System.out.println("magic attack!");
+    }
+    
+  }
+
 void keyPressed(){
+  if(key == 'm'){
+    menu = !menu;
+  }
   if(key == 's'){
        show = !show;
   }
+  if(key == 'q' && human.mediNum > 0){
+      addHP = true;
+  }
+  if(key == 'e'&& human.potionNum > 0){
+      addArmor = true;
+  }
+  
   if(key == CODED){
     switch(keyCode){
       case LEFT :
@@ -370,6 +504,11 @@ public void createPathBetweenInnodes(){
   
   
   
+
+
+
+
+
 int getWbyP(point keyPoint){
   for(Room r : roomList){
     point rp = r.mynode.keyPoint;
@@ -379,6 +518,7 @@ int getWbyP(point keyPoint){
   }
   return 0;
 }
+
 int getHbyP(point keyPoint){
   for(Room r : roomList){
     point rp = r.mynode.keyPoint;
