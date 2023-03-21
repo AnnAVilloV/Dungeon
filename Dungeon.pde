@@ -16,6 +16,8 @@ String gameStatus = "playing"; //playing, gameOver
 boolean show = false;
 boolean menu = false;
 
+int globalTime=0;
+
 BSPnode root;
 PVector portal;
 
@@ -49,6 +51,7 @@ PImage potionImage;
 PImage monsterImage;
 PImage humanImage;
 PImage portalImage;
+PImage scotImage;
 
 int chaIncrement;
 int roamIncrement;
@@ -71,6 +74,7 @@ void setup(){
   monsterImage = loadImage("monster.png");
   humanImage = loadImage("human.png");
   portalImage = loadImage("portal.png");
+  scotImage = loadImage("scottish.png");
   
 
 }
@@ -177,7 +181,9 @@ void drawMenu(){
     rect(menuX, menuY, menuW, menuH);
     
     image(humanImage, menuX+menuW/16,menuY+menuH/8,200,200);
-    
+    image(mediImage,menuX+menuW/32,menuY+menuH*5/8,50,50);
+    image(potionImage,menuX+menuW/32,menuY+menuH*6/8,50,50);
+    image(keyImage, menuX+menuW*3/16,menuY+menuH*5/8,50,50);
     
     
     fill(0);
@@ -189,6 +195,15 @@ void drawMenu(){
     text("Armor: " + human.armorValue + "/" + human.armorLimit, menuX + menuW*2/5, menuY + menuH*5/8);
     text("EXP: " + human.EXP+ "/" + human.EXPlimit, menuX + menuW*2/5, menuY + menuH*3/4);
     text("Dungeon Depth: " + dungeonDepth, menuX + menuW*2/5, menuY + menuH*7/8);
+    
+    textSize(menuX/15);
+    text(human.mediNum,menuX+menuW*3/32,menuY+menuH*11/16);
+    text(human.potionNum,menuX+menuW*3/32,menuY+menuH*13/16);
+    int keyNum = 0;
+    if(Key.status == 0){
+      keyNum = 1;
+    }
+    text(keyNum,menuX+menuW*9/32,menuY+menuH*11/16);
     
     fill(255);
     textSize(menuX/20);
@@ -284,11 +299,11 @@ void drawNormal(){
     if(mouseX >= displayWidth/16 && mouseX <= displayWidth/16+displayWidth/5 && mouseY >= displayHeight*3/4+displayHeight/10 && mouseY <= displayHeight*3/4 + displayHeight/5)  {
       //physical attack
       physicAttack = true;
-      System.out.println("physic attack!");
+
     }
     if(mouseX >= displayWidth*5/16 && mouseX <= displayWidth*5/16+displayWidth/5 && mouseY >= displayHeight*3/4+displayHeight/10 && mouseY <= displayHeight*3/4 + displayHeight/5){
       magicAttack = true;
-      System.out.println("magic attack!");
+
     }
     
   }
@@ -308,6 +323,7 @@ void keyPressed(){
   }
   
   if(key == CODED){
+
     switch(keyCode){
       case LEFT :
         moveLeft = true;
@@ -327,6 +343,7 @@ void keyPressed(){
 
 void keyReleased(){
     switch(keyCode){
+
       case LEFT :
         moveLeft = false;
         break;
@@ -367,7 +384,6 @@ public void createPathBetweenInnodes(){
         treeDepth = key;
     }
 
-    //System.out.println("treeDepth: "+treeDepth);
 
 
     // find inner nodes and gather their sub keypoints.
@@ -381,7 +397,7 @@ public void createPathBetweenInnodes(){
             if(t.rightChild !=null){
               t.keyPoints.addAll(t.rightChild.keyPoints);
             }
-             //System.out.println("inner node: " + t.depth + " keyPoints num: " + t.keyPoints.size());         
+      
         }
       }
     }

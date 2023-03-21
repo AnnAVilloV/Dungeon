@@ -54,7 +54,7 @@ final class Combat{
         text("Monster Turn",displayWidth/2-twidth/2, displayHeight/3);
       }
       if (millis() - startTime > 1000){
-        System.out.println("here!");
+
           monsterFight();
         } 
 
@@ -154,6 +154,23 @@ void barDraw(){
   fill(0);
   text("Physical Attack",displayWidth*3/32,displayHeight*3/4+displayHeight*3/20);
   text("Magic Attack",displayWidth*5/16 + displayWidth*1/32,displayHeight*3/4+displayHeight*3/20);
+  
+  fill(#6E72AA);
+  int boxX = displayWidth*3/4;
+  int boxY = displayHeight*3/4 + displayHeight/50;
+  int boxW = displayWidth/4 - displayWidth/50;
+  int boxH = displayHeight/4 - displayHeight/25;
+  rect(boxX, boxY, boxW, boxH);
+  
+  fill(0);
+  image(mediImage,boxX + boxW/16, boxY + boxH/8, 60,60);
+  text(human.mediNum, boxX + boxW/4, boxY + boxH*5/16);
+  text("Press Q to use", boxX + boxW*3/8, boxY + boxH*5/16);
+  image(potionImage,boxX + boxW/16,boxY + boxH/2, 60,60);
+  text(human.potionNum,boxX + boxW/4,boxY + boxH*11/16);
+  text("Press E to use", boxX + boxW*3/8, boxY + boxH*11/16);
+  
+  
 }  
   
   
@@ -173,7 +190,7 @@ void enemyDraw(){
     fill(#4B00FF);
     rect(displayWidth*66/80,displayHeight*6/80,displayWidth/10,30);
     fill(#9782A5);
-    rect(displayWidth*66/80,displayHeight*6/80,displayWidth/10*(enemy.armorLimit-enemy.armorValue)/enemy.armorValue,30);
+    rect(displayWidth*66/80,displayHeight*6/80,displayWidth/10*(enemy.armorLimit-enemy.armorValue)/enemy.armorLimit,30);
     
 
 }

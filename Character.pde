@@ -84,8 +84,10 @@ final class Character{
     text("Lv: " + level, displayWidth*5/8 + displayWidth/64,displayHeight*7/160 );
 
     //the character
-    fill(#082DFA);
-    circle(position.x,position.y, 30);
+    //fill(#082DFA);
+    //circle(position.x,position.y, 30);
+    
+    image(scotImage, position.x-40,position.y-40,60,60);
   
 
   

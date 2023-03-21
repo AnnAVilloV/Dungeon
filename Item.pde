@@ -32,7 +32,7 @@ final class Item{
         image(potionImage,position.x,position.y,40,40);
       }
       
-      if( calculate2PointDis(human.position.x, human.position.y, this.position.x, this.position.y )< 35){
+      if( calculate2PointDis(human.position.x, human.position.y, this.position.x, this.position.y )< 40){
           if(type == "medicine"){
              human.mediNum += 1;
              status = 0;
